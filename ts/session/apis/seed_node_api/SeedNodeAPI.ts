@@ -1,4 +1,6 @@
-import https from 'https';
+//import axios from 'axios';
+import { SocksProxyAgent, SocksProxyAgentOptions } from 'socks-proxy-agent';
+//import https from 'https';
 import tls from 'tls';
 
 import _ from 'lodash';
@@ -14,7 +16,6 @@ import { APPLICATION_JSON } from '../../../types/MIME';
 import { sha256 } from '../../crypto';
 import { allowOnlyOneAtATime } from '../../utils/Promise';
 import { GetServicesNodesFromSeedRequest } from '../snode_api/SnodeRequestTypes';
-
 /**
  * Fetch all snodes from seed nodes.
  * Exported only for tests. This is not to be used by the app directly
@@ -91,12 +92,17 @@ const getSslAgentForSeedNode = async (seedNodeHost: string, isSsl = false) => {
   }
 
   // read the cert each time. We only run this request once for each seed node nevertheless.
-  const sslOptions: https.AgentOptions = {
+
+  const sslOptions: SocksProxyAgentOptions = {
     // as the seed nodes are using a self signed certificate, we have to provide it here.
-    ca: certContent,
+    host: "127.0.0.1",
+    port: 9050,
+    tls: {
+      ca: certContent,
     // we have to reject them, otherwise our errors returned in the checkServerIdentity are simply not making the call fail.
     // so in production, rejectUnauthorized must be true.
-    rejectUnauthorized: true,
+      rejectUnauthorized: true,
+    },
     keepAlive: true,
 
     checkServerIdentity: (host: string, cert: any) => {
@@ -132,9 +138,10 @@ const getSslAgentForSeedNode = async (seedNodeHost: string, isSsl = false) => {
       return undefined;
     },
   };
-
+  //const socksProxyUrl = 'socks5h://127.0.0.1:9050';
   // we're creating a new Agent that will now use the certs we have configured
-  return new https.Agent(sslOptions);
+  //return new https.Agent(sslOptions);
+  return new SocksProxyAgent(sslOptions);
 };
 
 export interface SnodeFromSeed {
@@ -253,7 +260,13 @@ async function getSnodesFromSeedUrl(urlObj: URL): Promise<Array<any>> {
     urlObj.hostname,
     urlObj.protocol !== Constants.PROTOCOLS.HTTP
   );
-
+  /*const proxyUrl = 'socks5h://127.0.0.1:9050';
+  const socksAgent = new SocksProxyAgent(proxyUrl);
+  const newHttpAgent = new https.Agent({
+    ...sslAgent.options,
+    createConnection: socksAgent.createConnection.bind(socksAgent),
+    }); 
+  */
   const fetchOptions = {
     method: 'POST',
     timeout: 5000,
@@ -263,6 +276,7 @@ async function getSnodesFromSeedUrl(urlObj: URL): Promise<Array<any>> {
       'Accept-Language': 'en-us',
     },
     agent: sslAgent,
+    //agent: newHttpAgent,
   };
   window?.log?.info(`insecureNodeFetch => plaintext for getSnodesFromSeedUrl  ${url}`);
 
