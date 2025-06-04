@@ -18,7 +18,9 @@
     "react": "18.3.1",
     "@types/react": "18.3.3",
     "@babel/runtime": "^7.26.10",
-    "nanoid": "^3.3.8"
+    "nanoid": "^3.3.8",
+    "agent-base": "file:./node_modules/agent-base",
+    "socks-proxy-agent": "file:./node_modules/socks-proxy-agent"
   },
   "scripts": {
     "start-prod": "cross-env NODE_ENV=production NODE_APP_INSTANCE=devprod$MULTI electron .",
@@ -55,10 +57,11 @@
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
     "@reduxjs/toolkit": "^1.9.7",
-    "@signalapp/better-sqlite3": "9.0.13",
+    "@signalapp/better-sqlite3": "file:./node_modules/@signalapp/better-sqlite3",
     "@types/react-mentions": "^4.4.1",
     "@types/react-test-renderer": "^18.3.1",
     "abort-controller": "3.0.0",
+    "agent-base": "file:./node_modules/agent-base",
     "auto-bind": "^4.0.0",
     "blob-util": "2.0.2",
     "blueimp-load-image": "^5.16.0",
@@ -116,9 +119,9 @@
     "rimraf": "6.0.1",
     "sanitize.css": "^12.0.1",
     "semver": "^7.7.1",
+    "socks-proxy-agent": "file:./node_modules/socks-proxy-agent",
     "styled-components": "^6.1.15",
     "uuid": "11.1.0",
-    "viem": "^2.26.0",
     "webrtc-adapter": "^4.2.2",
     "zod": "^3.24.2"
   },
